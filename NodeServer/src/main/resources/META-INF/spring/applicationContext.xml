@@ -23,6 +23,7 @@
         <context:include-filter type="regex" expression=".*resource.*" />
         <context:include-filter type="regex" expression=".*service.*" />
         <context:include-filter type="regex" expression=".*spring.*" />
+        <context:exclude-filter type="regex" expression=".*Test.*" />
     </context:component-scan>
 
     <bean id="nodeService" class="au.org.qldjvm.service.node.NodeService">
