@@ -17,10 +17,6 @@
             <groupId>au.org.qldjvm</groupId>
             <artifactId>nodeAndHandler</artifactId>
         </dependency>
-        <dependency>
-            <groupId>au.org.qldjvm</groupId>
-            <artifactId>extraNode</artifactId>
-        </dependency>
         <!-- General dependencies for standard applications -->
         <dependency>
             <groupId>log4j</groupId>
@@ -96,6 +92,18 @@
                         <contextPath>/${project.name}</contextPath>
                     </webAppConfig>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>au.org.qldjvm</groupId>
+                        <artifactId>extraNode</artifactId>
+                        <version>0.1.0.BUILD-SNAPSHOT</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>au.org.qldjvm</groupId>
+                        <artifactId>nodeAndHandler</artifactId>
+                        <version>0.1.0.BUILD-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

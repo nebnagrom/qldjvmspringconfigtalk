@@ -9,6 +9,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import au.org.qldjvm.service.node.NodeService;
 
+/**
+ * Test that demonstrates programmatically building the context.
+ * 
+ * @author Benjamin Morgan
+ * 
+ */
 public class NodeHandlerConfigurerManualCreationTest {
 
     @Test

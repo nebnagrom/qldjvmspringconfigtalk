@@ -19,6 +19,7 @@
                 <groupId>au.org.qldjvm</groupId>
                 <artifactId>nodeAndHandler</artifactId>
                 <version>0.1.0.BUILD-SNAPSHOT</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>au.org.qldjvm</groupId>

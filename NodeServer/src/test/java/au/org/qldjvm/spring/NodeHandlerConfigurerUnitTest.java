@@ -16,11 +16,14 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import au.org.qldjvm.domain.node.DefaultNode;
 import au.org.qldjvm.domain.node.Node;
 import au.org.qldjvm.service.node.NodeService;
-import au.org.qldjvm.spring.ApplicationContextFactory;
-import au.org.qldjvm.spring.BeanReaderFactory;
-import au.org.qldjvm.spring.NodeHandlerConfigurer;
-import au.org.qldjvm.spring.ResourcePatternResolverFactory;
 
+/**
+ * A test that demonstrates how we can stub out the Spring Dependencies in order
+ * to unit test the configurer.
+ * 
+ * @author Benjamin Morgan
+ * 
+ */
 public class NodeHandlerConfigurerUnitTest {
 
     private NodeHandlerConfigurer nodeHandlerConfigurer;

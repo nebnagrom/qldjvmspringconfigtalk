@@ -18,6 +18,17 @@ import org.springframework.stereotype.Component;
 import au.org.qldjvm.domain.node.Node;
 import au.org.qldjvm.service.node.NodeService;
 
+/**
+ * Configures the NodeService with additional Nodes and Handlers based on what
+ * is found on the classpath.
+ * 
+ * Implements ApplicationContextAware which means that an ApplicationContext
+ * will be wired in by Spring. Implements InitializingBean which means that
+ * Spring will call afterPropertiesSet once the bean has been initialised.
+ * 
+ * @author Benjamin Morgan
+ * 
+ */
 @Component("nodeHandlerConfigurer")
 public class NodeHandlerConfigurer implements ApplicationContextAware, InitializingBean {
 
@@ -32,8 +43,18 @@ public class NodeHandlerConfigurer implements ApplicationContextAware, Initializ
 
     public void afterPropertiesSet() throws Exception {
 
-        LOGGER.debug("NodeHandlerConfigurer");
+        LOGGER.debug("NodeHandlerConfigurer is running afterPropertiesSet");
 
+        /**
+         * The constructors are hidden behind interfaces to make testing easier
+         * but this block will work with
+         * "ResourcePatternResolver pmrl = new PathMatchingResourcePatternResolver(classLoader);"
+         * "GenericApplicationContext newContext = new GenericApplicationContext(parentContext);"
+         * "BeanDefinitionReader beanReader = new XmlBeanDefinitionReader(applicationContext);"
+         */
+
+        // Find the resources that are in the classpath under
+        // au/org/qldjvm/additionalNodes/*/ that end with NodeContext.xml
         ResourcePatternResolver pmrl = resourcePatternResolverFactory.buildResourcePatternResolver(applicationContext
                 .getClassLoader());
         Resource[] resources = pmrl.getResources("classpath*:/au/org/qldjvm/additionalNodes/*/*NodeContext.xml");
@@ -42,15 +63,22 @@ public class NodeHandlerConfigurer implements ApplicationContextAware, Initializ
 
             LOGGER.debug("Processing a resource " + resource.getURI());
 
+            // Build a new application context that a child of the main context
             GenericApplicationContext newContext = applicationContextFactory
                     .buildApplicationContext(applicationContext);
+            // Read the beans into the new context using the resource
             BeanDefinitionReader beanReader = beanReaderFactory.buildBeanReader(newContext);
             int i = beanReader.loadBeanDefinitions(resource);
 
+            LOGGER.debug("just loaded " + i + " beans from resource");
+
+            // Find all beans that are Nodes
             Map nodeBeans = newContext.getBeansOfType(Node.class);
+            LOGGER.debug("found this many beans of node type " + nodeBeans.size());
             for (Object nodeObject : nodeBeans.values()) {
                 Node node = (Node) nodeObject;
                 LOGGER.debug("adding a node with name " + node.getName());
+                // Register a Node with the NodeService
                 nodeService.addNode(node);
             }
         }

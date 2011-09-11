@@ -12,7 +12,16 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-// need to say classpath* otherwise you get some prefixes based on the loader
+/**
+ * Test that demonstrates using the Spring test wiring to instantiate the
+ * Appliction Context.
+ * 
+ * @author Benjamin Morgan
+ * 
+ *         Note the context location needs to have classpath* otherwise you get
+ *         some prefixes based on the loader
+ * 
+ */
 @ContextConfiguration(locations = { "classpath*:META-INF/spring/applicationContext.xml" })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @RunWith(SpringJUnit4ClassRunner.class)
