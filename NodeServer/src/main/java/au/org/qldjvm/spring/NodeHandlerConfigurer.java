@@ -7,18 +7,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import au.org.qldjvm.domain.node.Node;
 import au.org.qldjvm.service.node.NodeService;
 
-@Component
+@Component("nodeHandlerConfigurer")
 public class NodeHandlerConfigurer implements ApplicationContextAware, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeHandlerConfigurer.class);
@@ -26,20 +26,25 @@ public class NodeHandlerConfigurer implements ApplicationContextAware, Initializ
     private ApplicationContext applicationContext;
     private NodeService nodeService;
 
+    private ApplicationContextFactory applicationContextFactory;
+    private ResourcePatternResolverFactory resourcePatternResolverFactory;
+    private BeanReaderFactory beanReaderFactory;
+
     public void afterPropertiesSet() throws Exception {
 
         LOGGER.debug("NodeHandlerConfigurer");
 
-        PathMatchingResourcePatternResolver pmrl = new PathMatchingResourcePatternResolver(
-                applicationContext.getClassLoader());
+        ResourcePatternResolver pmrl = resourcePatternResolverFactory.buildResourcePatternResolver(applicationContext
+                .getClassLoader());
         Resource[] resources = pmrl.getResources("classpath*:/au/org/qldjvm/additionalNodes/*/*NodeContext.xml");
 
         for (Resource resource : resources) {
 
             LOGGER.debug("Processing a resource " + resource.getURI());
 
-            GenericApplicationContext newContext = new GenericApplicationContext(applicationContext);
-            XmlBeanDefinitionReader beanReader = new XmlBeanDefinitionReader(newContext);
+            GenericApplicationContext newContext = applicationContextFactory
+                    .buildApplicationContext(applicationContext);
+            BeanDefinitionReader beanReader = beanReaderFactory.buildBeanReader(newContext);
             int i = beanReader.loadBeanDefinitions(resource);
 
             Map nodeBeans = newContext.getBeansOfType(Node.class);
@@ -58,5 +63,20 @@ public class NodeHandlerConfigurer implements ApplicationContextAware, Initializ
     @Autowired
     public void setNodeService(NodeService nodeService) {
         this.nodeService = nodeService;
+    }
+
+    @Autowired
+    public void setResourcePatternResolverFactory(ResourcePatternResolverFactory resourcePatternResolverFactory) {
+        this.resourcePatternResolverFactory = resourcePatternResolverFactory;
+    }
+
+    @Autowired
+    public void setBeanReaderFactory(BeanReaderFactory beanReaderFactory) {
+        this.beanReaderFactory = beanReaderFactory;
+    }
+
+    @Autowired
+    public void setApplicationContextFactory(ApplicationContextFactory applicationContextFactory) {
+        this.applicationContextFactory = applicationContextFactory;
     }
 }
